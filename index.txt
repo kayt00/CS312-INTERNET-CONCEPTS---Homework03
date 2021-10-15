@@ -1,0 +1,333 @@
+<!-- Katie Taylor - February 17, 2020 -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+        <head>
+                <title>CS312 Homework03</title>
+                <meta charset="UTF-8"/>
+		<style>
+                        .block {
+                                display: block;
+                                width: 100%;
+                                border: solid;
+                                background-color: white;
+                                padding: 14px 28px;
+                                font-size: 16px;
+                                cursor: pointer;
+                                text-align: center;
+                        }
+                        body {
+                                background: linear-gradient(to bottom right, #99ffcc, #cc99ff);
+                        }
+			table {
+				height: 400px;
+				width: 400px;
+			}
+                    </style>
+        </head>
+        <body>
+                <h1>Tic Tac Toe</h1>
+                <h3>The first player to place four tokens in a row, column, or diagonal wins.</h3>
+		<h2 id="message">Player X begin!</h2>
+		<ul>
+                   <li> player 'X' = USER</li>
+                   <li> player 'O' = COMPUTER</li>
+                </ul> 
+	     <div id="board">	
+	     <table>
+        		<tr>
+                		<td><input type="submit" value=" " id="button11" class="block" onclick="handleTurn('button11')"></td>
+                		<td><input type="submit" value=" " id="button12" class="block" onclick="handleTurn('button12')"></td>
+                		<td><input type="submit" value=" " id="button13" class="block" onclick="handleTurn('button13')"></td>
+                		<td><input type="submit" value=" " id="button14" class="block" onclick="handleTurn('button14')"></td>
+       			</tr>
+        		<tr>
+                		<td><input type="submit"  value=" " id="button21" class="block" onclick="handleTurn('button21')"></td>
+                		<td><input type="submit"  value=" " id="button22" class="block" onclick="handleTurn('button22')"></td>
+                		<td><input type="submit"  value=" " id="button23" class="block" onclick="handleTurn('button23')"></td>
+                		<td><input type="submit"  value=" " id="button24" class="block" onclick="handleTurn('button24')"></td>
+        		</tr>
+        		<tr>
+                		<td><input type="submit"  value=" " id="button31" class="block" onclick="handleTurn('button31')"></td>
+                		<td><input type="submit"  value=" " id="button32" class="block" onclick="handleTurn('button32')"></td>
+                		<td><input type="submit"  value=" " id="button33" class="block" onclick="handleTurn('button33')"></td>
+                		<td><input type="submit"  value=" " id="button34" class="block" onclick="handleTurn('button34')"></td>
+        		</tr>
+        		<tr>
+                		<td><input type="submit"  value=" " id="button41" class="block" onclick="handleTurn('button41')"></td>
+                		<td><input type="submit"  value=" " id="button42" class="block" onclick="handleTurn('button42')"></td>
+                		<td><input type="submit"  value=" " id="button43" class="block" onclick="handleTurn('button43')"></td>
+                		<td><input type="submit"  value=" " id="button44" class="block" onclick="handleTurn('button44')"></td>  
+        		</tr>
+		</table>
+		</div>
+         	    <script type="text/javascript">
+			
+			var board = [];   // array to track state of game board
+			let turn = "X";   // let player X begin
+			var winner = false; // varaible controls game
+			
+			class Queue // array's: queueX & queueO are used to implement a Queue  
+			{	  
+    				constructor() { 
+        				this.items = []; 
+    				} 
+				enqueue(element) { // add element to rear of queue
+    					this.items.push(element); 
+				} 
+				dequeue() { // remove element from front of queue  
+				    if(this.isEmpty()){ 
+				        return "Underflow"; // returns underflow when called on empty queue  
+				    } 
+				    return this.items.shift(); 
+				} 
+				isEmpty() { // return true if the queue is empty
+    					return this.items.length == 0; 
+				} 
+				size() { // return size of queue
+					return this.items.length;
+				}
+                   
+			} 
+		
+			var queueX = new Queue(); // object for queue class to hold player 'X' moves
+			var queueO = new Queue(); // object for queue class to hold player 'O' moves
+			
+			function compStrategy() { // defines strategy for implementing player 'O'
+				
+				if( (board['button11'] != "X") && (board['button11'] != "O") ) {  // check if outer corners occupied
+					choice = 'button11';
+				} else if( (board['button14'] != "X") && (board['button14'] != "O") ) {  
+                                        choice = 'button14';
+				} else if( (board['button41'] != "X") && (board['button41'] != "O") ) {  
+                                        choice = 'button41';
+                                } else if( (board['button44'] != "X") && (board['button44'] != "O") ) {  
+                                        choice = 'button44';
+                                } else if( (board['button23'] != "X") && (board['button23'] != "O") ) {  // check if center tiles occupied 
+                                        choice = 'button23';
+                                } else if( (board['button32'] != "X") && (board['button32'] != "O") ) {  
+                                        choice = 'button32';
+                                } else if( (board['button22'] != "X") && (board['button22'] != "O") ) {  
+                                        choice = 'button22';
+                                } else if( (board['button33'] != "X") && (board['button33'] != "O") ) {  
+                                        choice = 'button33';
+                                } else if( (board['button12'] != "X") && (board['button12'] != "O") ) { // checks if remainder of top/bottom rows occupied  
+                                        choice = 'button12';
+                                } else if( (board['button13'] != "X") && (board['button13'] != "O") ) {  
+                                        choice = 'button13';
+                                } else if( (board['button42'] != "X") && (board['button42'] != "O") ) {  
+                                        choice = 'button42';
+                                } else if( (board['button43'] != "X") && (board['button43'] != "O") ) {  
+                                        choice = 'button43';
+                                } else if( (board['button21'] != "X") && (board['button21'] != "O") ) { // checks if remainder of left/right columns occupied 
+                                        choice = 'button21';
+                                } else if( (board['button31'] != "X") && (board['button31'] != "O") ) {  
+                                        choice = 'button31';
+                                } else if( (board['button24'] != "X") && (board['button24'] != "O") ) {  
+                                        choice = 'button24';
+                                } else if( (board['button34'] != "X") && (board['button34'] != "O") ) {  
+                                        choice = 'button34';
+                                } 
+
+				document.getElementById(choice).click(); // selects choice based off conditions & initiates click to handleTurn()
+			};
+
+			function handleTurn(id) {  // obtains 'clicked' input from player 'X'  & handles turn
+				
+				if(board[id] == "X") {
+					window.alert("Cell already occupied by self.");
+				} else if(board[id] == "O") {
+					window.alert("Cell occupied by opponenet.");
+				}
+				
+				checkTokens(id);   // check token then add button to game board if conds. satisfied
+				getWinner();    // check status of game
+				getTurn();      // update turn to next player
+				
+			};
+			
+			function checkTokens(id) {       
+				
+				if(turn == "X") {
+					if(queueX.size() > 3) { // if player X has 4 tokens or more already in queue, 
+						remove = queueX.dequeue(); // remove first token in from queue
+						btn = document.getElementById(remove); // get id of corresponding button for token
+						btn.value = ""; // remove player symbol from button
+						board[remove] = ""; // remove player symbol from game board array
+						
+						queueX.enqueue(id); // add move to player X queue
+                                                board[id] = turn; // add move to game board
+                                                button = document.getElementById(id); // obtain id of button clicked
+                                                button.value = turn;            // update value of button 
+					}
+					else { // if player has less than 4 tokens down
+						queueX.enqueue(id); // add move to player X queue
+						board[id] = turn; // add move to game board
+						button = document.getElementById(id); // obtain id of button clicked
+                                		button.value = turn;            // update value of button 
+					}
+				} 
+
+				if(turn == "O") {
+                                        if(queueO.size() > 3) { // if player O has 4 tokens or more already in queue, 
+                                                remove = queueO.dequeue(); // remove first token in from queue
+                                                btn = document.getElementById(remove); // get id of corresponding button for token
+                                                btn.value = ""; // remove player symbol from button
+						board[remove] = ""; // remove player symbol from game board array
+
+						queueO.enqueue(id); // add move to player O queue
+                                                board[id] = turn; // add move to game board 
+                                                button = document.getElementById(id); // obtain id of button clicked
+                                                button.value = turn;            // update value of button 
+                                        }
+                                        else { // if player has less than 4 tokens down
+                                                queueO.enqueue(id); // add move to player O queue
+						board[id] = turn; // add move to game board 
+						button = document.getElementById(id); // obtain id of button clicked
+                                                button.value = turn;            // update value of button 
+                                        }
+                                } 	
+						
+			};
+
+			function getWinner() {
+
+                                if( (board['button11'] =="X") && (board['button12'] == "X") && (board['button13'] == "X") && (board['button14'] == "X" ) ) {  // checks for winning combo in row 1
+					winner = true;
+					window.alert("Player X wins!");
+				}
+				else if( (board['button11'] == "O") && (board['button12'] == "O") && (board['button13'] == "O") && (board['button14'] == "O") ) {
+					winner = true;
+					window.alert("Player O wins!");
+				}
+				
+
+				if( (board['button21'] == "X") && (board['button22'] == "X") && (board['button23'] == "X") && (board['button24'] == "X") ) { // checks for winning combo in row 2
+                                        winner = true;
+					window.alert("Player X wins!");	
+				}
+				else if( (board['button21'] == "O") && (board['button22'] == "O") && (board['button23'] == "O") && (board['button24'] == "O") ) {
+					winner = true;	
+					window.alert("Player O wins!");
+				}
+
+
+				if( (board['button31'] == "X") && (board['button32'] == "X") && (board['button33'] == "X") && (board['button34'] == "X") ) { // checks for winning combo in row 3
+                                        winner = true;
+					window.alert("Player X wins!");
+				}
+				else if( (board['button31'] == "O") && (board['button32'] == "O") && (board['button33'] == "O") && (board['button34'] == "O") ) {
+					winner = true;	
+					window.alert("Player O wins!");
+				}
+				
+
+				if( (board['button41'] == "X") && (board['button42'] == "X") && (board['button43'] == "X") && (board['button44'] == "X") ) { // checks for winning combo in row 4
+                                        winner = true;
+					window.alert("Player X wins!");
+				}
+				else if( (board['button41'] == "O") && (board['button42'] == "O") && (board['button43'] == "O") && (board['button44'] == "O") ) {
+					winner = true;	
+					window.alert("Player O wins!");	
+				}
+			
+			
+				if( (board['button11'] == "X") && (board['button21'] == "X") && (board['button31'] == "X") && (board['button41'] == "X") ) { // checks for winning combo in column 1
+                                        winner = true;
+					window.alert("Player X wins!");
+				}	
+				else if( (board['button11'] == "O") && (board['button21'] == "O") && (board['button31'] == "O") && (board['button41'] == "O") ) {
+					winner = true;	
+					window.alert("Player O wins!");
+				}
+
+				
+				if( (board['button12'] == "X") && (board['button22'] == "X") && (board['button32'] =="X") && (board['button42'] == "X") ) { // checks for winning combo in column 2
+                                        winner = true;
+					window.alert("Player X wins!");
+				}
+				else if( (board['button12'] == "O") && (board['button22'] == "O") && (board['button32'] == "O") && (board['button42'] == "O") ) {
+					winner = true;	
+					window.alert("Player O wins!");
+				}
+
+
+				if( (board['button13'] == "X") && (board['button23'] == "X") && (board['button33'] == "X") && (board['button43'] == "X") ) { // checks for winning combo in column 3
+                                        winner = true;
+					window.alert("Player X wins!");
+				}
+				else if( (board['button13'] == "O") && (board['button23'] == "O") && (board['button33'] == "O") && (board['button43'] == "O") ) {
+					winner = true;	
+					window.alert("Player O wins!");
+				}
+								
+
+				if( (board['button14'] == "X") && (board['button24'] == "X") && (board['button34'] == "X") && (board['button44'] == "X") ) { // checks for winning combo in column 4
+                                        winner = true;
+					window.alert("Player X wins!");
+				} 
+				else if( (board['button14'] == "O") && (board['button24'] == "O") && (board['button34'] == "O") && (board['button44'] == "O") ) {
+					winner = true;	
+					window.alert("Player O wins!");
+				}
+				
+				
+				if( (board['button11'] == "X") && (board['button22'] == "X") && (board['button33'] == "X") && (board['button44'] == "X") ) { // checks for winning combo in left diagnol
+                                        winner = true;
+					window.alert("Player X wins!");
+				}
+				else if( (board['button11'] == "O") && (board['button22'] == "O") && (board['button33'] == "O") && (board['button44'] == "O") ) {
+					winner = true;	
+					window.alert("Player O wins!");
+				}				
+			
+
+				if( (board['button41'] == "X") && (board['button32'] == "X") && (board['button23'] == "X") && (board['button14'] == "X") ) { // checks for winning combo in right diagnol
+                                        winner = true;
+					window.alert("Player X wins!");
+				}	
+				else if( (board['button41'] == "O")&& (board['button32'] == "O") && (board['button23'] == "O") && (board['button14'] == "O") ) {
+					winner = true;	 
+					window.alert("Player O wins!");
+				}	
+                        };
+
+			function getTurn() {
+				if(winner == false) {
+					if( turn == "X") {
+						turn = "O";
+						compStrategy(); // if computer's turn, call computer strategy to take turn
+					} else {
+						turn = "X";
+					}
+				}
+				return turn;
+			};
+			
+			function restart() { //restart game
+   				
+				var decision = confirm("Are you sure you want to restart the game?\n\nHit 'Cancel' to continue game or hit 'OK' to reset game.");
+				
+				if(decision == true) {
+					location.reload();
+					txt = "Game restarted";
+				}
+				else {
+					txt = "Resume playing.";
+				}
+
+				document.getElementById("message").innerHTML = txt;
+			};
+
+		    </script>
+
+    		    <input type="submit" id="reset-button" value="reset" onclick="restart()">
+		<p>
+			<a href="http://jigsaw.w3.org/css-validator/check/referer">
+    			<img style="border:0;width:88px;height:31px"
+        		src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+        		alt="Valid CSS!" />
+    			</a>
+		</p>
+        
+        </body>
+</html>       
